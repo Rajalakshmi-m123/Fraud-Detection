@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './InputForm.css';
 
-const InputForm = () => {
+const InputForm = ({ onResult }) => {
     const navigate = useNavigate();
     const [inputData, setInputData] = useState({
         patientId: '',
@@ -38,11 +38,12 @@ const InputForm = () => {
         try {
             const response = await axios.post('http://localhost:5000/predict', inputData);
             if (response.status === 200) { // Check if the response is successful
+                onResult(response.data);  // Pass result to parent
                 navigate('/results', { state: { result: response.data } }); // Navigate to results page
             }
         } catch (error) {
             console.error('Error fetching prediction:', error);
-            setError('Failed to fetch prediction. Please try again.'); // Set error message
+            setError('Failed to fetch prediction. Please try again.');
         } finally {
             setLoading(false);
         }
